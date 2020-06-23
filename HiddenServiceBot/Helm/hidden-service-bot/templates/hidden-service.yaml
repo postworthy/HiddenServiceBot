@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ printf "%s-%s" .Release.Name  "hidden-service" }}
+    release: {{ .Release.Name }}
+  name: {{ printf "%s-%s" .Release.Name  "hidden-service" }}
+spec:
+  replicas: 1
+  strategy: {}
+  selector:
+    matchLabels:
+      app: {{ printf "%s-%s" .Release.Name  "hidden-service" }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ printf "%s-%s" .Release.Name  "hidden-service" }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - env:
+        - name: "LISTEN_PORT"
+          value: "80"
+        - name: "REDIRECT"
+          value: {{ .Values.redirectTo }}
+        - name: "PRIVATE_KEY"
+          valueFrom:
+            secretKeyRef:
+              key:  rsab64
+              name: {{ printf "%s-%s" .Release.Name  "secrets" }}
+        image: strm/tor
+        name: {{ printf "%s-%s" .Release.Name  "hidden-service" }}
+        imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+status: {}
