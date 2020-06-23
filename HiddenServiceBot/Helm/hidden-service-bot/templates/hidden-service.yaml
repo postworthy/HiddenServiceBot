@@ -21,16 +21,14 @@ spec:
     spec:
       containers:
       - env:
-        - name: "LISTEN_PORT"
-          value: "80"
-        - name: "REDIRECT"
-          value: {{ .Values.redirectTo }}
-        - name: "PRIVATE_KEY"
+        - name: "QUICK_START_URL"
+          value: {{ .Values.QUICK_START_URL }}
+        - name: "TELEGRAM_API_KEY"
           valueFrom:
             secretKeyRef:
-              key:  rsab64
+              key:  TELEGRAM_API_KEY
               name: {{ printf "%s-%s" .Release.Name  "secrets" }}
-        image: strm/tor
+        image: {{ .Values.IMAGE }}
         name: {{ printf "%s-%s" .Release.Name  "hidden-service" }}
         imagePullPolicy: IfNotPresent
       restartPolicy: Always

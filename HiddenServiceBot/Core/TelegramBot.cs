@@ -21,13 +21,14 @@ namespace HiddenServiceBot.Core
         private Dictionary<string, Func<MessageEventArgs, Task>> handlers = new Dictionary<string, Func<MessageEventArgs, Task>>();
 
         public string ApiKey { get; } = Environment.GetEnvironmentVariable("TELEGRAM_API_KEY");
-        public void Run()
+        public Task Run()
         {
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine($"ID={me.Id} User={me.FirstName}");
 
             botClient.OnMessage += HandleMessage;
             botClient.StartReceiving();
+            return Task.Factory.StartNew(() => Console.Read());
         }
 
         private async void HandleMessage(object sender, MessageEventArgs e)
