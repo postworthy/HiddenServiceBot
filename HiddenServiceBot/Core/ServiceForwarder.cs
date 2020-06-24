@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -43,6 +44,35 @@ namespace HiddenServiceBot.Core
             }
             else
                 throw new Exception("Name is not valid");
+        }
+
+        public static IEnumerable<(string name, string uri, string portinfo)> ListExistingServices()
+        {
+            var torrc = File.ReadAllLines("/etc/tor/torrc");
+
+            foreach (var dir in Directory.GetDirectories("/var/lib/tor/"))
+            {
+                var svcName = dir.Replace("/var/lib/tor/", "");
+                var hdnUrl = File.ReadAllText(Path.Combine(dir,"hostname")).Trim();
+                var hdnPortInfo = "";
+                
+                //Run through the torrc file to find the port info
+                for (int i = 0; i < torrc.Length; i++)
+                {
+                    //First look for the service dir and the port info should be on the next line
+                    if (torrc[i] == $"HiddenServiceDir /var/lib/tor/{svcName}")
+                    {
+                        i++; //Next line
+                        if (i < torrc.Length) //Just in case
+                            hdnPortInfo = torrc[i]; //Get the port info
+
+                        break;
+                    }
+                }
+
+                yield return (svcName, hdnUrl, hdnPortInfo);
+            }
+
         }
 
         public static bool RemoveServiceForwarder(string name)

@@ -17,16 +17,19 @@ namespace HiddenServiceBot.Core
             Process.Start(new ProcessStartInfo() { FileName = "tor" });
             Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "nginx" }); //The Dockerfile should enable sudo for nginx only...
 
-            this.RegisterMessageHandler("/help", async (e) => {
+            this.RegisterMessageHandler("/help", async (e) =>
+            {
                 var uritext = Environment.GetEnvironmentVariable("QUICK_START_URL");
                 if (Uri.TryCreate(uritext, UriKind.Absolute, out var uri))
                     await botClient.SendTextMessageAsync(e.Message.Chat.Id, "/quickstart");
 
+                await botClient.SendTextMessageAsync(e.Message.Chat.Id, "/list");
                 await botClient.SendTextMessageAsync(e.Message.Chat.Id, "/start https://www.google.com:443/");
             });
 
 
-            this.RegisterMessageHandler("/quickstart", async (e) => {
+            this.RegisterMessageHandler("/quickstart", async (e) =>
+            {
                 var uritext = Environment.GetEnvironmentVariable("QUICK_START_URL");
                 if (Uri.TryCreate(uritext, UriKind.Absolute, out var uri))
                 {
@@ -49,7 +52,22 @@ namespace HiddenServiceBot.Core
                 }
             });
 
-            this.RegisterMessageHandler("/start", async (e) => {
+            this.RegisterMessageHandler("/list", async (e) =>
+            {
+                //Do the actual forwarding
+                var services = ServiceForwarder.ListExistingServices().ToList();
+                if (services.Count > 0)
+                {
+                    await botClient.SendTextMessageAsync(e.Message.Chat.Id, $"Running Services: ");
+                    services.ForEach(async x => await botClient.SendTextMessageAsync(e.Message.Chat.Id, $"{x.uri}:{x.portinfo.Split(':').Last()}"));
+                }
+                else
+                    await botClient.SendTextMessageAsync(e.Message.Chat.Id, $"No Running Services");
+
+            });
+
+            this.RegisterMessageHandler("/start", async (e) =>
+            {
                 var uritext = e.Message.Text.ToLower().Replace("/start ", "");
                 if (Uri.TryCreate(uritext, UriKind.Absolute, out var uri))
                 {
@@ -72,12 +90,13 @@ namespace HiddenServiceBot.Core
                 }
             });
 
-            this.RegisterMessageHandler("/stop", async (e) => {
+            this.RegisterMessageHandler("/stop", async (e) =>
+            {
                 await botClient.SendTextMessageAsync(e.Message.Chat.Id, "Stopping Hidden Service");
                 var serviceName = e.Message.Text.ToLower().Replace("/stop_", "");
 
                 //Remove and Stop
-                if(ServiceForwarder.RemoveServiceForwarder(serviceName))
+                if (ServiceForwarder.RemoveServiceForwarder(serviceName))
                     await botClient.SendTextMessageAsync(e.Message.Chat.Id, "Stopped Hidden Service");
                 else
                     await botClient.SendTextMessageAsync(e.Message.Chat.Id, $"Hidden Service Stop Failed");
