@@ -30,7 +30,7 @@ namespace HiddenServiceBot.Core
 
                 //Reset Tor and Nginx configs
                 Process.Start(new ProcessStartInfo() { FileName = "pkill", Arguments = "-sighup tor" });
-                Process.Start(new ProcessStartInfo() { FileName = "pkill", Arguments = "-sighup nginx" });
+                Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "nginx -s reload" });
 
                 //Wait for Tor to create the hidden service
                 while (!File.Exists($"/var/lib/tor/{name}/hostname"))
@@ -80,7 +80,7 @@ namespace HiddenServiceBot.Core
 
                 //Reset Tor and Nginx configs
                 Process.Start(new ProcessStartInfo() { FileName = "pkill", Arguments = "-sighup tor" });
-                Process.Start(new ProcessStartInfo() { FileName = "pkill", Arguments = "-sighup nginx" });
+                Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "nginx -s reload" });
 
                 return true;
             }

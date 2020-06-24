@@ -1,3 +1,3 @@
-IMAGE: kvrg/hiddenservicebot:1.0
+IMAGE: kvrg/hiddenservicebot:1.0.2
 QUICK_START_URL: https://192.168.1.221:443
 TELEGRAM_API_KEY: JHVwM3IkM2NyM3RLM3kh

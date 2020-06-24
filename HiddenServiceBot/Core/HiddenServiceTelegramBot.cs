@@ -15,7 +15,7 @@ namespace HiddenServiceBot.Core
         {
             //Ensure Tor & Nginx are both up and running
             Process.Start(new ProcessStartInfo() { FileName = "tor" });
-            Process.Start(new ProcessStartInfo() { FileName = "nginx" });
+            Process.Start(new ProcessStartInfo() { FileName = "sudo", Arguments = "nginx" }); //The Dockerfile should enable sudo for nginx only...
 
             this.RegisterMessageHandler("/help", async (e) => {
                 var uritext = Environment.GetEnvironmentVariable("QUICK_START_URL");

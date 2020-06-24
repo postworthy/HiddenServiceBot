@@ -7,7 +7,11 @@ namespace HiddenServiceBot
     {
         static void Main(string[] args)
         {
-            (new HiddenServiceTelegramBot()).Run().Wait();
+            try
+            {
+                (new HiddenServiceTelegramBot()).Run().Wait();
+            }
+            catch (Exception ex) { Console.WriteLine(ex); }
         }
     }
 }

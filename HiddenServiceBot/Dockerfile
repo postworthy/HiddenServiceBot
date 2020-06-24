@@ -4,12 +4,19 @@ FROM mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim AS base
 WORKDIR /app
 
 RUN apt update
-RUN apt install gnupg2 tor nginx procps --yes
+RUN apt install gnupg2 tor nginx procps sudo --yes
 RUN curl https://helm.baltorepo.com/organization/signing.asc | apt-key add -
 RUN apt install apt-transport-https --yes
 RUN echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list
 RUN apt update
 RUN apt install helm
+
+RUN groupadd -r botuser && useradd --create-home -r -g botuser botuser
+RUN echo 'botuser ALL=(ALL) NOPASSWD: /usr/sbin/nginx' >> /etc/sudoers #allows botuser to launch nginx w/o being root
+RUN chown botuser /etc/tor/torrc
+RUN chown botuser /var/lib/tor/
+RUN chown botuser /etc/nginx/conf.d/
+USER botuser
 
 #RUN sed -i 's/#HiddenServiceDir \/var\/lib\/tor\/hidden_service\//HiddenServiceDir \/var\/lib\/tor\/hidden_service\//g' /etc/tor/torrc
 #RUN sed -i 's/#HiddenServicePort 80 127.0.0.1:80/HiddenServicePort 80 127.0.0.1:8080/g' /etc/tor/torrc

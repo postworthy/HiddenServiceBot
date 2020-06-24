@@ -28,7 +28,7 @@ namespace HiddenServiceBot.Core
 
             botClient.OnMessage += HandleMessage;
             botClient.StartReceiving();
-            return Task.Factory.StartNew(() => Console.Read());
+            return Task.Factory.StartNew(() => { do { Console.Read(); } while (true); });
         }
 
         private async void HandleMessage(object sender, MessageEventArgs e)
