@@ -18,9 +18,6 @@ RUN chown botuser /var/lib/tor/
 RUN chown botuser /etc/nginx/conf.d/
 USER botuser
 
-#RUN sed -i 's/#HiddenServiceDir \/var\/lib\/tor\/hidden_service\//HiddenServiceDir \/var\/lib\/tor\/hidden_service\//g' /etc/tor/torrc
-#RUN sed -i 's/#HiddenServicePort 80 127.0.0.1:80/HiddenServicePort 80 127.0.0.1:8080/g' /etc/tor/torrc
-
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["HiddenServiceBot/HiddenServiceBot.csproj", "HiddenServiceBot/"]

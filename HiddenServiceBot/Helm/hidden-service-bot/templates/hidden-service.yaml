@@ -23,6 +23,8 @@ spec:
       - env:
         - name: "QUICK_START_URL"
           value: {{ .Values.QUICK_START_URL }}
+        - name: "COUNTRY_CODE"
+          value: {{ .Values.COUNTRY_CODE }}
         - name: "TELEGRAM_API_KEY"
           valueFrom:
             secretKeyRef:
